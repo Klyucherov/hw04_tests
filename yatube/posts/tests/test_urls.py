@@ -1,5 +1,7 @@
+from http import HTTPStatus
+
 from django.contrib.auth import get_user_model
-from django.test import TestCase, Client
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from ..models import Group, Post
@@ -55,7 +57,7 @@ class PostURLTests(TestCase):
         for page in self.pages_list[:4]:
             with self.subTest(page=page):
                 response = self.guest_client.get(page)
-                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_redirect_pages(self):
         """Проверяем редирект незарегистрированного пользователя
@@ -64,7 +66,7 @@ class PostURLTests(TestCase):
         for page in self.pages_list[4:]:
             with self.subTest(page=page):
                 response = self.guest_client.get(page)
-                self.assertEqual(response.status_code, 302)
+                self.assertEqual(response.status_code, HTTPStatus.FOUND)
                 self.assertRedirects(response, f'/auth/login/?next={page}')
 
     def test_edit_page(self):
@@ -72,14 +74,14 @@ class PostURLTests(TestCase):
         for page in self.pages_list:
             with self.subTest(page=page):
                 response = self.author_client.get(page)
-                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_create_page(self):
         """Проверяем доступность страниц для авторизованного пользователя."""
         for page in self.pages_list[:5]:
             with self.subTest(page=page):
                 response = self.author_client.get(page)
-                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_redirect_for_authorized_client(self):
         """Проверяем редирект авторизованного пользователя при попытке
@@ -91,13 +93,13 @@ class PostURLTests(TestCase):
         redirect_url = reverse(
             'posts:post_detail', kwargs={'post_id': self.post_2.id}
         )
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, redirect_url)
 
     def test_unexisting_page(self):
         """Проверяем статус несуществующей страницы."""
         response = self.guest_client.get('/unexisting_page/')
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
     def test_templates(self):
         """Проверяем вызываемые шаблоны для соответствующих URLs."""

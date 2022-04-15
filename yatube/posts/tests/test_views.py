@@ -1,7 +1,7 @@
+from django import forms
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
-from django import forms
 
 from ..forms import PostForm
 from ..models import Group, Post
@@ -127,19 +127,19 @@ class PostViewsTests(TestCase):
             self.post_2.group)
         self.assertEqual(len(object_page_obj.object_list), 1)
 
-    # def test_post_detail_correct_context(self):
-    #     """Шаблон post_detail формируется с одним постом,
-    #     отфильтрованным по id.
-    #     """
-    #     response = self.author_client.get(
-    #         reverse('posts:post_detail',
-    #                 kwargs={'post_id': self.post_1.id}
-    #                 )
-    #     )
-    #     object_post_id = response.context['post_id']
-    #     object_one_post = response.context['one_post']
-    #     self.assertEqual(object_post_id, self.post_1.id)
-    #     self.assertNotIsInstance(object_one_post, list)
+    def test_post_detail_correct_context(self):
+        """Шаблон post_detail формируется с одним постом,
+        отфильтрованным по id.
+        """
+        response = self.author_client.get(
+            reverse('posts:post_detail',
+                    kwargs={'post_id': self.post_1.id}
+                    )
+        )
+        object_post_id = response.context['post_id']
+        object_one_post = response.context['post']
+        self.assertEqual(object_post_id, self.post_1.id)
+        self.assertNotIsInstance(object_one_post, list)
 
     def test_paginator_correct_context(self):
         """Шаблоны index, group_posts и profile формируются с

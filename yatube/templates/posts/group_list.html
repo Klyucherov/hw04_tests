@@ -11,7 +11,7 @@
             href="{% url 'posts:profile' post.author.username %}">все посты
         пользователя</a>
     <li>Дата публикации: {{ post.pub_date|date:"d E Y" }}</li>
-    <p>{{ post.text }}</p>
+    <p>{{ post.text|linebreaksbr }}</p>
     <a href="{% url 'posts:post_detail' post.pk %}">подробная информация </a>
     <br/>
     <a href="{% url 'posts:group_posts' post.group.slug %}">все записи группы</a>

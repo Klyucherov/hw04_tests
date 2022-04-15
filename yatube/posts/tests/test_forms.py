@@ -1,8 +1,10 @@
-from django.urls import reverse
-from django.test import Client, TestCase
-from django.contrib.auth import get_user_model
+from http import HTTPStatus
 
-from ..models import Post, Group
+from django.contrib.auth import get_user_model
+from django.test import Client, TestCase
+from django.urls import reverse
+
+from ..models import Group, Post
 
 User = get_user_model()
 
@@ -36,15 +38,15 @@ class PostCreateFormTests(TestCase):
 
     def setUp(self):
         self.guest_client = Client()
-        self.author_client = Client()
-        self.author_client.force_login(self.user)
+        self.authorized_client = Client()
+        self.authorized_client.force_login(self.user)
 
     def test_create_post_saved(self):
-        """При отправке валидной формы со страницы create
+        self.create___ = """При отправке валидной формы со страницы create
         создаётся новая запись в базе данных.
         """
         posts_count = Post.objects.count()
-        self.author_client.post(
+        response = self.authorized_client.post(
             reverse('posts:post_create'),
             data=self.form_data,
             follow=True)
@@ -53,12 +55,15 @@ class PostCreateFormTests(TestCase):
         self.assertEqual(last_post.text, self.form_data['text'])
         self.assertEqual(last_post.group.id, self.form_data['group'])
         self.assertEqual(last_post.author, self.form_data['author'])
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertRedirects(response, reverse(
+            'posts:profile', kwargs={'username': self.user.username}))
 
     def test_edit_post_changed(self):
         """При отправке валидной формы со страницы post_edit
         происходит изменение поста с отправленным id в базе данных.
         """
-        self.author_client.post(
+        self.authorized_client.post(
             reverse(
                 'posts:post_edit',
                 kwargs={'post_id': self.post.id}
