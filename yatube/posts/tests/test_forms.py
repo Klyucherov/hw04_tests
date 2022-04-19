@@ -42,7 +42,7 @@ class PostCreateFormTests(TestCase):
         self.authorized_client.force_login(self.user)
 
     def test_create_post_saved(self):
-        self.create___ = """При отправке валидной формы со страницы create
+        """При отправке валидной формы со страницы create
         создаётся новая запись в базе данных.
         """
         posts_count = Post.objects.count()

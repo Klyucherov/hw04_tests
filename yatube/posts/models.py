@@ -7,8 +7,8 @@ User = get_user_model()
 class Group(models.Model):
     title = models.CharField(
         max_length=200,
-        verbose_name='заглавие',
-        help_text='напишите заглавие'
+        verbose_name='Заглавие',
+        help_text='Напишите заглавие'
     )
     slug = models.SlugField(
         unique=True,
